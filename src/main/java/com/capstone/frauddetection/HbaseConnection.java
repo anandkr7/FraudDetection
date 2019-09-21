@@ -21,8 +21,8 @@ public class HbaseConnection implements Serializable {
 				org.apache.hadoop.conf.Configuration conf = (org.apache.hadoop.conf.Configuration) HBaseConfiguration
 						.create();
 				conf.setInt("timeout", 1200);
-				conf.set("hbase.master", "ec2-1-2-3-4.compute-1.amazonaws.com:60000");
-				conf.set("hbase.zookeeper.quorum", "ec2-1-2-3-4.compute-1.amazonaws.com");
+				conf.set("hbase.master", "quickstart.cloudera:60000");
+				conf.set("hbase.zookeeper.quorum", "quickstart.cloudera");
 				conf.set("hbase.zookeeper.property.clientPort", "2181");
 				conf.set("zookeeper.znode.parent", "/hbase");
 				Connection con = ConnectionFactory.createConnection(conf);
