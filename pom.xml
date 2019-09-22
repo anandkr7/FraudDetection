@@ -6,30 +6,40 @@
 	<artifactId>FraudDetection</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<properties>
+		<org.apache.spark.spark-core.version>2.3.0</org.apache.spark.spark-core.version>
+		<org.apache.spark.spark-sql.version>2.3.0</org.apache.spark.spark-sql.version>
+		<org.apache.spark.spark-streaming.version>2.3.0</org.apache.spark.spark-streaming.version>
+		<org.apache.spark.spark-mllib.version>2.3.0</org.apache.spark.spark-mllib.version>
+		<org.apache.spark.spark-streaming-kafka.version>2.3.0</org.apache.spark.spark-streaming-kafka.version>
+		<com.datastax.spark.spark-cassandra-connector.version>2.3.0</com.datastax.spark.spark-cassandra-connector.version>
+		<com.datastax.spark.spark-cassandra-connector-java.version>1.5.2</com.datastax.spark.spark-cassandra-connector-java.version>
+		<maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
+		<java.version>1.8</java.version>
+		<hadoop.version>2.6.0</hadoop.version>
+        <hive-jdbc.version>1.1.0</hive-jdbc.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.11</artifactId>
 			<version>${org.apache.spark.spark-core.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_2.11</artifactId>
 			<version>${org.apache.spark.spark-sql.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-streaming_2.11</artifactId>
 			<version>${org.apache.spark.spark-streaming.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-mllib_2.11</artifactId>
 			<version>${org.apache.spark.spark-mllib.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
@@ -85,6 +95,11 @@
 					</execution>
 				</executions>
 				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>com.capstone.frauddetection.KafkaSparkStreamingApplication</mainClass>
+						</manifest>
+					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
@@ -93,17 +108,6 @@
 		</plugins>
 	</build>
 
-	<properties>
-		<org.apache.spark.spark-core.version>2.3.0</org.apache.spark.spark-core.version>
-		<org.apache.spark.spark-sql.version>2.3.0</org.apache.spark.spark-sql.version>
-		<org.apache.spark.spark-streaming.version>2.3.0</org.apache.spark.spark-streaming.version>
-		<org.apache.spark.spark-mllib.version>2.3.0</org.apache.spark.spark-mllib.version>
-		<org.apache.spark.spark-streaming-kafka.version>2.3.0</org.apache.spark.spark-streaming-kafka.version>
-		<com.datastax.spark.spark-cassandra-connector.version>2.3.0</com.datastax.spark.spark-cassandra-connector.version>
-		<com.datastax.spark.spark-cassandra-connector-java.version>1.5.2</com.datastax.spark.spark-cassandra-connector-java.version>
-		<maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
-		<hadoop.version>2.6.0</hadoop.version>
-        <hive-jdbc.version>1.1.0</hive-jdbc.version>
-	</properties>
+	
 
 </project>
