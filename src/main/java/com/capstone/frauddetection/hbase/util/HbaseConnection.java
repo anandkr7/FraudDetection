@@ -1,4 +1,4 @@
-package com.capstone.frauddetection;
+package com.capstone.frauddetection.hbase.util;
 
 import java.io.IOException;
 import java.io.Serializable;
