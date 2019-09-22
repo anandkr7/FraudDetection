@@ -141,8 +141,6 @@ public class HbaseDAO {
 	
 	public static String saveHbaseLookupData(KafkaTransaction txn, String currentPostcode, String currentTxnDt) {
 
-		
-
 		// Instantiating HTable class
 		HTable hTable;
 		try {

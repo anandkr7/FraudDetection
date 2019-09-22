@@ -38,6 +38,7 @@ class DistanceUtility {
 	 */
 	public DistanceUtility() throws NumberFormatException, IOException {
 
+		@SuppressWarnings("resource")
 		BufferedReader br = new BufferedReader(new FileReader("/home/cloudera/Project/FraudDetection-master/src/main/resources/zipCodePosId.csv"));
 
 		String line = null;
@@ -95,15 +96,3 @@ class DistanceUtility {
 	}
 
 }
-
-/*//To get the distance between two zipcodes from the main class  
-public class PostcodeCalculator
-{
-	public static void main(String args[]) throws NumberFormatException, IOException
-	{
-		DistanceUtility disUtil=new DistanceUtility();
-		
-		System.out.println(disUtil.getDistanceViaZipCode("10001", "10524"));
-	}
-}
-*/
