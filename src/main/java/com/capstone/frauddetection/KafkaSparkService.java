@@ -2,6 +2,7 @@ package com.capstone.frauddetection;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Connection;
 
 import org.apache.hadoop.hbase.client.HTable;
 
@@ -12,7 +13,7 @@ import com.google.gson.Gson;
 
 public class KafkaSparkService {
 
-	public static String validateCardTransaction(String data, String zipCodeCVS, HTable hTableConf) {
+	public static String validateCardTransaction(String data, String zipCodeCVS, HTable hTableConf, Connection con) {
 
 		String postCode = "";
 		String transactionDt = "";
@@ -45,16 +46,16 @@ public class KafkaSparkService {
 
 					DistanceUtility distanceUtility = new DistanceUtility(zipCodeCVS);
 					Double distance = distanceUtility.getDistanceViaZipCode(txn.getPostcode(), postCode);
-					
-					if(distance > 0) {
-						
+
+					if (distance > 0) {
+
 						Double distancePerSecond = distance / ((DateUtility.getMilliseconds(txn.getTransaction_dt())
 								- DateUtility.getMilliseconds(transactionDt)) / 1000);
-	
+
 						System.out.println("Card Id -- " + txn.getCard_id() + " Distance -- "
 								+ new BigDecimal(distance).doubleValue() + " === Distance Per Second -- "
 								+ new BigDecimal(distancePerSecond).toPlainString());
-	
+
 						if (distancePerSecond < 0.25) {
 							genuineFlag = true;
 						} else {
@@ -70,7 +71,7 @@ public class KafkaSparkService {
 						txn.setStatus("FRAUD");
 					}
 
-					HiveDAO.saveCardTransactionsData(txn);
+					HiveDAO.saveCardTransactionsData(txn, con);
 					if (genuineFlag) {
 						HbaseDAO.saveHbaseLookupData(txn, postCode, transactionDt, hTableConf);
 					}

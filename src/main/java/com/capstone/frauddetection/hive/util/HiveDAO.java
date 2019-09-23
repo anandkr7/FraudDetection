@@ -8,7 +8,7 @@ import com.capstone.frauddetection.KafkaTransaction;
 
 public class HiveDAO {
 
-	public static boolean saveCardTransactionsData(KafkaTransaction txn) {
+	public static boolean saveCardTransactionsData(KafkaTransaction txn, Connection con) {
 
 		String sqlStatementInsert = "INSERT INTO TABLE card_transactions_hive(card_id,member_id,amount,postcode,pos_id,transaction_dt,status)"
 				+ "VALUES('" + txn.getCard_id() + "','" + txn.getMember_id() + "','" + txn.getAmount() + "','"
@@ -16,7 +16,6 @@ public class HiveDAO {
 				+ txn.getStatus() + "')";
 
 		System.out.println("Sql Statement Insert ==> " + sqlStatementInsert);
-		Connection con = null;
 
 		try {
 
@@ -38,7 +37,7 @@ public class HiveDAO {
 		return true;
 	}
 
-	private static Connection getHiveConnection() {
+	public static Connection getHiveConnection() {
 		Connection con = null;
 		try {
 
