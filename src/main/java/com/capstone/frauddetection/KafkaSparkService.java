@@ -2,9 +2,6 @@ package com.capstone.frauddetection;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Connection;
-
-import org.apache.hadoop.hbase.client.HTable;
 
 import com.capstone.frauddetection.hbase.util.HbaseDAO;
 import com.capstone.frauddetection.hive.util.HiveDAO;
@@ -13,7 +10,7 @@ import com.google.gson.Gson;
 
 public class KafkaSparkService {
 
-	public static String validateCardTransaction(String data, String zipCodeCVS, HTable hTableConf, Connection con) {
+	public static String validateCardTransaction(String data, String zipCodeCVS) {
 
 		String postCode = "";
 		String transactionDt = "";
@@ -25,10 +22,10 @@ public class KafkaSparkService {
 
 				KafkaTransaction txn = gson.fromJson(data, KafkaTransaction.class);
 
-				int memberScore = HbaseDAO.getScore(new TransactionData(txn.getCard_id()), hTableConf);
-				Double uclValue = HbaseDAO.getUCLForTransaction(new TransactionData(txn.getCard_id()), hTableConf);
-				postCode = HbaseDAO.getPostCodeForTransaction(new TransactionData(txn.getCard_id()), hTableConf);
-				transactionDt = HbaseDAO.getTxnTimeForTransaction(new TransactionData(txn.getCard_id()), hTableConf);
+				int memberScore = HbaseDAO.getScore(new TransactionData(txn.getCard_id()));
+				Double uclValue = HbaseDAO.getUCLForTransaction(new TransactionData(txn.getCard_id()));
+				postCode = HbaseDAO.getPostCodeForTransaction(new TransactionData(txn.getCard_id()));
+				transactionDt = HbaseDAO.getTxnTimeForTransaction(new TransactionData(txn.getCard_id()));
 
 				if (memberScore > 0) {
 
@@ -71,9 +68,11 @@ public class KafkaSparkService {
 						txn.setStatus("FRAUD");
 					}
 
-					HiveDAO.saveCardTransactionsData(txn, con);
+					System.out.println("Saving Hive Info");
+					HiveDAO.saveCardTransactionsData(txn);
 					if (genuineFlag) {
-						HbaseDAO.saveHbaseLookupData(txn, postCode, transactionDt, hTableConf);
+						System.out.println("Saving HBases Info");
+						HbaseDAO.saveHbaseLookupData(txn, postCode, transactionDt);
 					}
 				}
 			}

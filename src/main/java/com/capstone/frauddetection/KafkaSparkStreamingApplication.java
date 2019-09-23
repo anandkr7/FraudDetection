@@ -41,13 +41,13 @@ public class KafkaSparkStreamingApplication {
 		kafkaParams.put("bootstrap.servers", "100.24.223.181:9092");
 		kafkaParams.put("key.deserializer", StringDeserializer.class);
 		kafkaParams.put("value.deserializer", StringDeserializer.class);
-		kafkaParams.put("group.id", "Anand_Kafka_Spark14");
+		kafkaParams.put("group.id", "Anand_Kafka_Spark47");
 		kafkaParams.put("auto.offset.reset", "earliest");
 		kafkaParams.put("enable.auto.commit", true);
 
 		Collection<String> topics = Arrays.asList("transactions-topic-verified");
-		HTable hTableConf = HbaseDAO.getHbaseTableConfig();
-		Connection hiveCon = HiveDAO.getHiveConnection();
+		HbaseDAO.getHbaseTableConfig();
+		HiveDAO.getHiveConnection();
 
 		JavaInputDStream<ConsumerRecord<String, String>> stream = KafkaUtils.createDirectStream(jssc,
 				LocationStrategies.PreferConsistent(),
@@ -61,7 +61,7 @@ public class KafkaSparkStreamingApplication {
 
 			@Override
 			public void call(JavaRDD<String> rdd) {
-				rdd.foreach(a -> KafkaSparkService.validateCardTransaction(a, zipCodeCVS, hTableConf, hiveCon));
+				rdd.foreach(a -> KafkaSparkService.validateCardTransaction(a, zipCodeCVS));
 			}
 		});
 

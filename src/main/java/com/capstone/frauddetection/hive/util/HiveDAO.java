@@ -7,8 +7,10 @@ import java.sql.Statement;
 import com.capstone.frauddetection.KafkaTransaction;
 
 public class HiveDAO {
+	
+	private static Connection con = null;
 
-	public static boolean saveCardTransactionsData(KafkaTransaction txn, Connection con) {
+	public static boolean saveCardTransactionsData(KafkaTransaction txn) {
 
 		String sqlStatementInsert = "INSERT INTO TABLE card_transactions_hive(card_id,member_id,amount,postcode,pos_id,transaction_dt,status)"
 				+ "VALUES('" + txn.getCard_id() + "','" + txn.getMember_id() + "','" + txn.getAmount() + "','"
@@ -19,7 +21,6 @@ public class HiveDAO {
 
 		try {
 
-			con = getHiveConnection();
 			Statement stmt = con.createStatement();
 			stmt.execute(sqlStatementInsert);
 
@@ -27,18 +28,12 @@ public class HiveDAO {
 			e.printStackTrace();
 			return false;
 		} finally {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
 		}
 		return true;
 	}
 
-	public static Connection getHiveConnection() {
-		Connection con = null;
+	public static void getHiveConnection() {
+		
 		try {
 
 			String connectionUrl = "jdbc:hive2://quickstart.cloudera:10000/;ssl=false";
@@ -46,17 +41,14 @@ public class HiveDAO {
 			Class.forName(JDBC_DRIVER_NAME);
 			con = DriverManager.getConnection(connectionUrl, "hdfs", "");
 
-			return con;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				con.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return con;
 	}
 
 }
