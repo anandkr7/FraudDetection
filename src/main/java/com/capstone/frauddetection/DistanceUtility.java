@@ -33,13 +33,14 @@ class DistanceUtility {
 
 	/**
 	 * Initialize zip codes using given file
+	 * @param zipCodeCVS 
 	 * @throws IOException 
 	 * @throws NumberFormatException 
 	 */
-	public DistanceUtility() throws NumberFormatException, IOException {
+	public DistanceUtility(String zipCodeCVS) throws NumberFormatException, IOException {
 
 		@SuppressWarnings("resource")
-		BufferedReader br = new BufferedReader(new FileReader("/home/cloudera/Project/FraudDetection-master/src/main/resources/zipCodePosId.csv"));
+		BufferedReader br = new BufferedReader(new FileReader(zipCodeCVS));
 
 		String line = null;
 

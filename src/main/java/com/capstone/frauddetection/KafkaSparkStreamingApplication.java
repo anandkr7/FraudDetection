@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.hadoop.hbase.client.HTable;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.log4j.Level;
@@ -20,6 +21,8 @@ import org.apache.spark.streaming.kafka010.ConsumerStrategies;
 import org.apache.spark.streaming.kafka010.KafkaUtils;
 import org.apache.spark.streaming.kafka010.LocationStrategies;
 
+import com.capstone.frauddetection.hbase.util.HbaseDAO;
+
 public class KafkaSparkStreamingApplication {
 
 	public static void main(String[] args) throws Exception {
@@ -29,6 +32,8 @@ public class KafkaSparkStreamingApplication {
 
 		SparkConf sparkConf = new SparkConf().setAppName("KafkaSparkStreamingDemo").setMaster("local");
 		JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(1));
+		
+		String zipCodeCVS = args[0];
 
 		Map<String, Object> kafkaParams = new HashMap<>();
 		kafkaParams.put("bootstrap.servers", "100.24.223.181:9092");
@@ -39,6 +44,7 @@ public class KafkaSparkStreamingApplication {
 		kafkaParams.put("enable.auto.commit", true);
 
 		Collection<String> topics = Arrays.asList("transactions-topic-verified");
+		HTable hTableConf = HbaseDAO.getHbaseTableConfig();
 
 		JavaInputDStream<ConsumerRecord<String, String>> stream = KafkaUtils.createDirectStream(jssc,
 				LocationStrategies.PreferConsistent(),
@@ -52,7 +58,7 @@ public class KafkaSparkStreamingApplication {
 
 			@Override
 			public void call(JavaRDD<String> rdd) {
-				rdd.foreach(a -> KafkaSparkService.validateCardTransaction(a));
+				rdd.foreach(a -> KafkaSparkService.validateCardTransaction(a, zipCodeCVS , hTableConf));
 			}
 		});
 

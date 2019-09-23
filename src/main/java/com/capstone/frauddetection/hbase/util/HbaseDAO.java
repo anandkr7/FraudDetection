@@ -34,15 +34,11 @@ public class HbaseDAO {
 	 * 
 	 */
 
-	public static int getScore(TransactionData transactionData) throws IOException {
-
-		Admin hBaseAdmin1 = HbaseConnection.getHbaseAdmin();
-		HTable table = null;
+	public static int getScore(TransactionData transactionData, HTable table) throws IOException {
 
 		try {
 
 			Get g = new Get(Bytes.toBytes(transactionData.getMemberId()));
-			table = new HTable(hBaseAdmin1.getConfiguration(), "card_lookup_hbase");
 			Result result = table.get(g);
 			byte[] value = result.getValue(Bytes.toBytes("col_family"), Bytes.toBytes("score"));
 			if (value != null) {
@@ -60,16 +56,12 @@ public class HbaseDAO {
 		}
 		return 0;
 	}
-	
-	public static Double getUCLForTransaction(TransactionData transactionData) throws IOException {
 
-		Admin hBaseAdmin1 = HbaseConnection.getHbaseAdmin();
-		HTable table = null;
+	public static Double getUCLForTransaction(TransactionData transactionData, HTable table) throws IOException {
 
 		try {
 
 			Get g = new Get(Bytes.toBytes(transactionData.getMemberId()));
-			table = new HTable(hBaseAdmin1.getConfiguration(), "card_lookup_hbase");
 			Result result = table.get(g);
 			byte[] value = result.getValue(Bytes.toBytes("col_family"), Bytes.toBytes("UCL"));
 			if (value != null) {
@@ -87,16 +79,12 @@ public class HbaseDAO {
 		}
 		return 0d;
 	}
-	
-	public static String getPostCodeForTransaction(TransactionData transactionData) throws IOException {
 
-		Admin hBaseAdmin1 = HbaseConnection.getHbaseAdmin();
-		HTable table = null;
+	public static String getPostCodeForTransaction(TransactionData transactionData, HTable table) throws IOException {
 
 		try {
 
 			Get g = new Get(Bytes.toBytes(transactionData.getMemberId()));
-			table = new HTable(hBaseAdmin1.getConfiguration(), "card_lookup_hbase");
 			Result result = table.get(g);
 			byte[] value = result.getValue(Bytes.toBytes("col_family"), Bytes.toBytes("postcode"));
 			if (value != null) {
@@ -105,25 +93,16 @@ public class HbaseDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (table != null)
-					table.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+
 		}
 		return null;
 	}
-	
-	public static String getTxnTimeForTransaction(TransactionData transactionData) throws IOException {
 
-		Admin hBaseAdmin1 = HbaseConnection.getHbaseAdmin();
-		HTable table = null;
+	public static String getTxnTimeForTransaction(TransactionData transactionData, HTable table) throws IOException {
 
 		try {
 
 			Get g = new Get(Bytes.toBytes(transactionData.getMemberId()));
-			table = new HTable(hBaseAdmin1.getConfiguration(), "card_lookup_hbase");
 			Result result = table.get(g);
 			byte[] value = result.getValue(Bytes.toBytes("col_family"), Bytes.toBytes("transaction_dt"));
 			if (value != null) {
@@ -132,43 +111,27 @@ public class HbaseDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (table != null)
-					table.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+
 		}
 		return null;
 	}
-	
-	public static String saveHbaseLookupData(KafkaTransaction txn, String currentPostcode, String currentTxnDt) {
 
-		// Instantiating HTable class
-		HTable hTable;
+	public static String saveHbaseLookupData(KafkaTransaction txn, String currentPostcode, String currentTxnDt,
+			HTable hTable) {
+
 		try {
-			
-			// Instantiating Configuration class
-			Configuration config = HBaseConfiguration.create();
-			Admin hBaseAdmin1 = HbaseConnection.getHbaseAdmin();
-			hTable = new HTable(hBaseAdmin1.getConfiguration(), "card_lookup_hbase");
-		
-			// Instantiating Put class
-			// accepts a row name
+
 			Put p = new Put(Bytes.toBytes(txn.getCard_id()));
 
 			// Updating a cell value
-			p.add(Bytes.toBytes("col_family"), Bytes.toBytes("postcode"),
-					Bytes.toBytes(txn.getPostcode()));
-			p.add(Bytes.toBytes("col_family"), Bytes.toBytes("transaction_dt"),
-					Bytes.toBytes(txn.getTransaction_dt()));
+			p.add(Bytes.toBytes("col_family"), Bytes.toBytes("postcode"), Bytes.toBytes(txn.getPostcode()));
+			p.add(Bytes.toBytes("col_family"), Bytes.toBytes("transaction_dt"), Bytes.toBytes(txn.getTransaction_dt()));
 
 			// Saving the put Instance to the HTable.
 			hTable.put(p);
-			System.out.println("Data Updated -- Current PostCode - " + currentPostcode 
-					+ " --  Updated Postcode - " + txn.getPostcode() 
-					+ " %%%%% Current Date - " + currentTxnDt 
-					+ " -- Updated Date - " + txn.getTransaction_dt());
+			System.out.println("Data Updated -- Current PostCode - " + currentPostcode + " --  Updated Postcode - "
+					+ txn.getPostcode() + " %%%%% Current Date - " + currentTxnDt + " -- Updated Date - "
+					+ txn.getTransaction_dt());
 
 			// closing HTable
 			hTable.close();
@@ -178,6 +141,20 @@ public class HbaseDAO {
 		}
 
 		return null;
+	}
+
+	public static HTable getHbaseTableConfig() {
+
+		// Instantiating HTable class
+		HTable hTable = null;
+		Configuration config = HBaseConfiguration.create();
+		try {
+			Admin hBaseAdmin1 = HbaseConnection.getHbaseAdmin();
+			hTable = new HTable(hBaseAdmin1.getConfiguration(), "card_lookup_hbase");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return hTable;
 	}
 
 }
