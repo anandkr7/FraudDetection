@@ -8,6 +8,10 @@ import com.capstone.frauddetection.hive.util.HiveDAO;
 import com.capstone.fraudetection.util.DateUtility;
 import com.google.gson.Gson;
 
+/**
+ * Class that reads the transactions from the Kafka Streams and performs the processing of the 3 Rules and .
+ *
+ */
 public class KafkaSparkService {
 
 	public static String validateCardTransaction(String data, String zipCodeCVS) {
