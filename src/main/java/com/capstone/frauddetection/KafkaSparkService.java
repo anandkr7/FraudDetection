@@ -20,6 +20,8 @@ public class KafkaSparkService {
 		String transactionDt = "";
 		boolean genuineFlag = true;
 		Gson gson = new Gson();
+		
+		System.out.println("\nKafka Txn Data Received - " + data);
 
 		try {
 			if (data.length() > 10) {
@@ -72,10 +74,8 @@ public class KafkaSparkService {
 						txn.setStatus("FRAUD");
 					}
 
-					System.out.println("Saving Hive Info");
 					HiveDAO.saveCardTransactionsData(txn);
 					if (genuineFlag) {
-						System.out.println("Saving HBases Info");
 						HbaseDAO.saveHbaseLookupData(txn, postCode, transactionDt);
 					}
 				}

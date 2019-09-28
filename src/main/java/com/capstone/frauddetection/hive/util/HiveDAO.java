@@ -36,7 +36,7 @@ public class HiveDAO {
 		
 		try {
 
-			String connectionUrl = "jdbc:hive2://ec2-3-80-123-119.compute-1.amazonaws.com:10000/;ssl=false";
+			String connectionUrl = "jdbc:hive2://ec2-3-91-38-99.compute-1.amazonaws.com:10000/;ssl=false";
 			String JDBC_DRIVER_NAME = "org.apache.hive.jdbc.HiveDriver";
 			Class.forName(JDBC_DRIVER_NAME);
 			con = DriverManager.getConnection(connectionUrl, "hdfs", "");
