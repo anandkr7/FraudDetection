@@ -14,6 +14,8 @@ import com.google.gson.Gson;
  */
 public class KafkaSparkService {
 
+	// Method to fetch the previous card member details and calculate the
+	// genuineness of the transaction
 	public static void validateCardTransaction(String data, String zipCodeCVS) {
 
 		String postCode = "";
@@ -27,6 +29,8 @@ public class KafkaSparkService {
 		try {
 			if (data.length() > 10) {
 
+				// Fetch the member score, uclValue, postCode, transaction date from the lookup
+				// table which will be updated constantly with the fresh data
 				txn = gson.fromJson(data, KafkaTransaction.class);
 				Integer memberScore = HbaseDAO.getScore(new TransactionData(txn.getCard_id()));
 				Double uclValue = HbaseDAO.getUCLForTransaction(new TransactionData(txn.getCard_id()));
@@ -34,7 +38,16 @@ public class KafkaSparkService {
 				transactionDt = HbaseDAO.getTxnTimeForTransaction(new TransactionData(txn.getCard_id()));
 
 				if (memberScore > 0) {
+
+					// Using the card member details stored in lookup table, calculate the
+					// genuineness of the transaction
 					genuineFlag = validatTransaction(txn, memberScore, uclValue, postCode, transactionDt, zipCodeCVS);
+
+					if (genuineFlag) {
+						txn.setStatus("GENUINE");
+					} else {
+						txn.setStatus("FRAUD");
+					}
 
 					HbaseDAO.saveCardTransactionsHbase(txn);
 					if (genuineFlag) {
@@ -52,23 +65,27 @@ public class KafkaSparkService {
 			String postCode, String transactionDt, String zipCodeCVS) throws NumberFormatException, IOException {
 
 		boolean genuineFlag = true;
-		if (Double.valueOf(txn.getAmount()) < new BigDecimal(uclValue).doubleValue()) {
-			genuineFlag = true;
-		} else {
+
+		// Check if the current transaction amount is more than the UCL value
+		if (Double.valueOf(txn.getAmount()) > new BigDecimal(uclValue).doubleValue()) {
+			// If the current transaction amount is greated than the UCL value the
+			// transaction is fraudulent
 			genuineFlag = false;
 		}
 
-		if (memberScore > 200) {
-			genuineFlag = true;
-		} else {
+		// Check if the current member score is less than 200.
+		if (memberScore < 200) {
+			// If the current card member score is less than 200, the transaction is
+			// fraudulent
 			genuineFlag = false;
 		}
 
+		// Check if the distance traveled per second between current transaction post
+		// code and the previous transaction post code is less than 0.25 km/sec
 		DistanceUtility distanceUtility = new DistanceUtility(zipCodeCVS);
 		Double distance = distanceUtility.getDistanceViaZipCode(txn.getPostcode(), postCode);
 
 		if (distance > 0) {
-
 			double timeDiffInMillis = DateUtility.getMilliseconds(txn.getTransaction_dt())
 					- DateUtility.getMilliseconds(transactionDt);
 
@@ -79,25 +96,15 @@ public class KafkaSparkService {
 						"Card Id -- " + txn.getCard_id() + " Distance -- " + new BigDecimal(distance).doubleValue()
 								+ " === Distance Per Second -- " + new BigDecimal(distancePerSecond).toPlainString());
 
-				if (distancePerSecond < 0.25) {
-					genuineFlag = true;
-				} else {
+				// If the distance traveled is greater than the 0.25 km/sec betweeen two
+				// transactions, than the transaction is fraudulent
+				if (distancePerSecond > 0.25) {
 					genuineFlag = false;
 				}
-			} else {
-				genuineFlag = true;
 			}
-		} else {
-			genuineFlag = true;
 		}
 
-		if (genuineFlag) {
-			txn.setStatus("GENUINE");
-		} else {
-			txn.setStatus("FRAUD");
-		}
-		return true;
-
+		return genuineFlag;
 	}
 
 }

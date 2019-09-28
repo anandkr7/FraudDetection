@@ -34,13 +34,6 @@ public class KafkaSparkStreamingApplication {
 		Logger.getLogger("org").setLevel(Level.OFF);
 		Logger.getLogger("akka").setLevel(Level.OFF);
 
-		// Creating the Spark configuration
-		SparkConf sparkConf = new SparkConf().setAppName("KafkaSparkStreamingDemo").setMaster("local");
-
-		// Creating the Streaming context using spark configuration details.
-		// Setting the Spark streaming micro batch window for 1 seconds
-		JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(1));
-
 		// Load the zip code csv file from the specified path as argument
 		String zipCodeCVS = args[0];
 
@@ -59,6 +52,13 @@ public class KafkaSparkStreamingApplication {
 
 		// Configuring the kafka topic to read the card transactions from.
 		Collection<String> topics = Arrays.asList("transactions-topic-verified");
+
+		// Creating the Spark configuration
+		SparkConf sparkConf = new SparkConf().setAppName("KafkaSparkStreamingDemo").setMaster("local");
+
+		// Creating the Streaming context using spark configuration details.
+		// Setting the Spark streaming micro batch window for 1 seconds
+		JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(1));
 
 		// Initialize the Hbase Connection for Hbase table operations for both card
 		// transactions table and lookup table
