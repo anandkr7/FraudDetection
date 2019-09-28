@@ -34,12 +34,13 @@ public class KafkaSparkStreamingApplication {
 		JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(1));
 
 		String zipCodeCVS = args[0];
+		int random = (int) (Math.random() * 1000 + 1);
 
 		Map<String, Object> kafkaParams = new HashMap<>();
 		kafkaParams.put("bootstrap.servers", "100.24.223.181:9092");
 		kafkaParams.put("key.deserializer", StringDeserializer.class);
 		kafkaParams.put("value.deserializer", StringDeserializer.class);
-		kafkaParams.put("group.id", "Anand_Kafka_Spark63");
+		kafkaParams.put("group.id", "Anand_Kafka_Spark" + random);
 		kafkaParams.put("auto.offset.reset", "earliest");
 		kafkaParams.put("enable.auto.commit", true);
 

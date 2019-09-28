@@ -20,7 +20,10 @@ public class HiveDAO {
 		System.out.println("Sql Statement Insert ==> " + sqlStatementInsert);
 
 		try {
-
+			System.out.println("Hive Dao Connection - " + con);
+			if(con == null) {
+				getHiveConnection();
+			}
 			Statement stmt = con.createStatement();
 			stmt.execute(sqlStatementInsert);
 
