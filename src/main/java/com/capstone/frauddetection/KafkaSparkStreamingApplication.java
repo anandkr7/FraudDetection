@@ -39,7 +39,7 @@ public class KafkaSparkStreamingApplication {
 		kafkaParams.put("bootstrap.servers", "100.24.223.181:9092");
 		kafkaParams.put("key.deserializer", StringDeserializer.class);
 		kafkaParams.put("value.deserializer", StringDeserializer.class);
-		kafkaParams.put("group.id", "Anand_Kafka_Spark51");
+		kafkaParams.put("group.id", "Anand_Kafka_Spark63");
 		kafkaParams.put("auto.offset.reset", "earliest");
 		kafkaParams.put("enable.auto.commit", true);
 
