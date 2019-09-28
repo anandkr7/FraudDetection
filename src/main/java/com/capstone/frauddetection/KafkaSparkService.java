@@ -52,17 +52,23 @@ public class KafkaSparkService {
 
 					if (distance > 0) {
 
-						Double distancePerSecond = distance / ((DateUtility.getMilliseconds(txn.getTransaction_dt())
-								- DateUtility.getMilliseconds(transactionDt)) / 1000);
+						double timeDiffInMillis = DateUtility.getMilliseconds(txn.getTransaction_dt())
+								- DateUtility.getMilliseconds(transactionDt);
 
-						System.out.println("Card Id -- " + txn.getCard_id() + " Distance -- "
-								+ new BigDecimal(distance).doubleValue() + " === Distance Per Second -- "
-								+ new BigDecimal(distancePerSecond).toPlainString());
+						if (timeDiffInMillis > 1000) {
+							double timeDiffInSec = timeDiffInMillis / 1000;
+							Double distancePerSecond = timeDiffInSec / timeDiffInMillis;
+							System.out.println("Card Id -- " + txn.getCard_id() + " Distance -- "
+									+ new BigDecimal(distance).doubleValue() + " === Distance Per Second -- "
+									+ new BigDecimal(distancePerSecond).toPlainString());
 
-						if (distancePerSecond < 0.25) {
-							genuineFlag = true;
+							if (distancePerSecond < 0.25) {
+								genuineFlag = true;
+							} else {
+								genuineFlag = false;
+							}
 						} else {
-							genuineFlag = false;
+							genuineFlag = true;
 						}
 					} else {
 						genuineFlag = true;
