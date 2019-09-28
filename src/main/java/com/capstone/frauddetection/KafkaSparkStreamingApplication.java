@@ -45,8 +45,8 @@ public class KafkaSparkStreamingApplication {
 		kafkaParams.put("enable.auto.commit", true);
 
 		Collection<String> topics = Arrays.asList("transactions-topic-verified");
-		HbaseDAO.getHbaseTableConfig();
-		HiveDAO.getHiveConnection();
+		HbaseDAO.getHbaseLookupTableConfig();
+		HbaseDAO.getHbaseCardTransactionsTableConfig();
 
 		JavaInputDStream<ConsumerRecord<String, String>> stream = KafkaUtils.createDirectStream(jssc,
 				LocationStrategies.PreferConsistent(),

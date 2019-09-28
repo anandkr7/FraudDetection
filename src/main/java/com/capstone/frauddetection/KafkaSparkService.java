@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import com.capstone.frauddetection.hbase.util.HbaseDAO;
-import com.capstone.frauddetection.hive.util.HiveDAO;
 import com.capstone.fraudetection.util.DateUtility;
 import com.google.gson.Gson;
 
 /**
- * Class that reads the transactions from the Kafka Streams and performs the processing of the 3 Rules and .
+ * Class that reads the transactions from the Kafka Streams and performs the
+ * processing of the 3 Rules and .
  *
  */
 public class KafkaSparkService {
@@ -20,7 +20,7 @@ public class KafkaSparkService {
 		String transactionDt = "";
 		boolean genuineFlag = true;
 		Gson gson = new Gson();
-		
+
 		System.out.println("\nKafka Txn Data Received - " + data);
 
 		try {
@@ -74,7 +74,7 @@ public class KafkaSparkService {
 						txn.setStatus("FRAUD");
 					}
 
-					HiveDAO.saveCardTransactionsData(txn);
+					HbaseDAO.saveCardTransactionsHbase(txn);
 					if (genuineFlag) {
 						HbaseDAO.saveHbaseLookupData(txn, postCode, transactionDt);
 					}
