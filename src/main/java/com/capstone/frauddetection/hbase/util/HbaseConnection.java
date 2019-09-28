@@ -8,11 +8,14 @@ import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 
+/**
+ * Class for creating Hbase connection
+ */
 public class HbaseConnection implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private static Admin hbaseAdmin = null;
-	
+
 	public static Admin getHbaseAdmin() throws IOException {
 
 		try {

@@ -1,5 +1,8 @@
 package com.capstone.frauddetection;
 
+/**
+ * Model DTO Class for holding the crad transaction details
+ */
 public class KafkaTransaction {
 
 	private String card_id;
