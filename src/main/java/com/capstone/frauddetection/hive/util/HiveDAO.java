@@ -39,7 +39,7 @@ public class HiveDAO {
 		
 		try {
 
-			String connectionUrl = "jdbc:hive://ip-172-31-23-138.ec2.internal:10000/";
+			String connectionUrl = "jdbc:hive2://ip-172-31-23-138.ec2.internal:10000/;ssl=false";
 			String JDBC_DRIVER_NAME = "org.apache.hive.jdbc.HiveDriver";
 			Class.forName(JDBC_DRIVER_NAME);
 			con = DriverManager.getConnection(connectionUrl, "hdfs", "");
